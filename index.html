@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reasoning Sectional Test for RRB JE</title>
+<style>
+:root{
+  --bg:#0b1220;--bar:#080d1a;--card:#16203a;--card2:#1b2745;--line:#2b3658;
+  --text:#e9edf9;--muted:#9fabcb;--or:#ff9a2a;--or2:#ffb355;
+  --green:#3ddc97;--red:#ff7b95;--purple:#a78bfa;--blue:#6ea8ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Roboto,"Segoe UI",system-ui,-apple-system,Arial,sans-serif;-webkit-text-size-adjust:100%}
+body{min-height:100vh;display:flex;flex-direction:column}
+header{background:var(--bar);border-bottom:3px solid var(--or);padding:12px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}
+header svg{flex:none}
+header h1{font-size:18px;margin:0;font-weight:700;line-height:1.2;flex:1}
+#timer{font-weight:800;font-size:18px;background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:10px;font-variant-numeric:tabular-nums;display:none}
+#timer.low{color:var(--red);border-color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.55}}
+main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:18px 14px 30px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}
+h2{margin:0 0 10px;font-size:30px;line-height:1.15}
+.sub{color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:16px}
+.stat b{display:block;font-size:30px}
+.stat span{color:var(--muted);font-size:14px}
+.pos b{color:var(--green)}.neg b{color:var(--red)}
+ul.rules{padding-left:22px;color:#c3ccea;line-height:1.7}
+.btn{background:var(--or);color:#1a1205;border:0;border-radius:12px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);font-weight:600}
+.btn.rev{background:var(--purple);color:#140d2b}
+.btn.sm{padding:9px 14px;font-size:14px}
+/* test layout */
+#test{display:none}
+.tlayout{display:grid;grid-template-columns:1fr 290px;gap:16px;align-items:start}
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:var(--muted);font-size:14px}
+.qnum{color:var(--or);font-weight:800;font-size:16px}
+.qtext{font-size:17px;line-height:1.6;margin-bottom:16px}
+.qtext .series{display:block;margin:8px 0;padding:8px 12px;background:var(--bg);border-radius:10px;font-weight:600;letter-spacing:.5px;overflow-x:auto;white-space:nowrap}
+.opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:var(--card2);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;color:var(--text);font-size:16px;cursor:pointer}
+.opt .l{flex:none;width:28px;height:28px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--muted)}
+.opt.sel{border-color:var(--or);background:#2a2640}
+.opt.sel .l{background:var(--or);color:#1a1205}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.pal{position:sticky;top:78px}
+.pal h3{margin:0 0 10px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.pn{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);font-weight:700;cursor:pointer;position:relative;font-size:14px}
+.pn.visited{background:#3a2230;border-color:#8a3b55}
+.pn.ans{background:#143a31;border-color:var(--green)}
+.pn.mark{background:#2f2650;border-color:var(--purple)}
+.pn.markans::after{content:"";position:absolute;right:4px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--green)}
+.pn.cur{outline:2px solid var(--or);outline-offset:1px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:14px 0;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-2px;border:1.5px solid}
+#palToggle{display:none}
+#submit2{display:none;border-color:var(--or);color:var(--or2)}
+/* results */
+#result{display:none}
+.score{text-align:center;padding:10px 0 4px}
+.score .big{font-size:56px;font-weight:900;color:var(--or)}
+.score .big small{font-size:22px;color:var(--muted);font-weight:600}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.rgrid .stat b{font-size:24px}
+h3.sec{font-size:20px;margin:26px 0 12px}
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:8px}
+.map a{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;font-weight:800;text-decoration:none;color:var(--text);border:1.5px solid;cursor:pointer}
+.map .c{background:#143a31;border-color:var(--green)}
+.map .w{background:#40202c;border-color:var(--red)}
+.map .u{background:var(--bg);border-color:var(--line);color:var(--muted)}
+.ins{display:grid;gap:10px}
+.ins .row{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;margin-right:6px}
+.chip.c{background:#143a31;color:var(--green)}.chip.w{background:#40202c;color:var(--red)}.chip.u{background:#2a3050;color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.fbtn{background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:99px;padding:8px 14px;font-size:14px;cursor:pointer}
+.fbtn.on{background:var(--or);color:#1a1205;border-color:var(--or);font-weight:800}
+.sol{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;scroll-margin-top:84px}
+.sol.c{border-left:5px solid var(--green)}.sol.w{border-left:5px solid var(--red)}.sol.u{border-left:5px solid var(--muted)}
+.sol .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;font-size:13px}
+.topic{background:#2a2640;color:var(--or2);padding:3px 10px;border-radius:99px;font-weight:700}
+.src{color:var(--muted);font-size:12px}
+.sopt{padding:8px 12px;border-radius:10px;margin:6px 0;border:1px solid var(--line);font-size:15px}
+.sopt.ok{border-color:var(--green);background:#143a31}
+.sopt.bad{border-color:var(--red);background:#40202c}
+.steps{background:var(--card);border-radius:12px;padding:12px 14px 12px 34px;line-height:1.7;margin:12px 0}
+.steps li{margin:4px 0}
+.tip{background:#2b2412;border:1px dashed var(--or);border-radius:12px;padding:10px 14px;color:#ffe2b5;margin-top:10px;line-height:1.6}
+.viz{margin:12px 0;overflow-x:auto}
+.boxes{display:flex;gap:5px;flex-wrap:nowrap}
+.bx{min-width:34px;padding:6px 4px;border:1.5px solid var(--line);border-radius:8px;text-align:center;font-weight:700;background:var(--card);font-size:14px}
+.bx small{display:block;color:var(--muted);font-weight:500;font-size:10px}
+.bx.hl{border-color:var(--or);background:#3a2c14;color:var(--or2)}
+.bx.hl2{border-color:var(--purple);background:#2f2650}
+table.t{border-collapse:collapse;font-size:14px}
+table.t td,table.t th{border:1px solid var(--line);padding:6px 12px;text-align:center}
+table.t th{background:var(--card2)}
+pre.tree{background:var(--card);padding:12px;border-radius:10px;overflow-x:auto;font-size:14px;line-height:1.5}
+footer{background:var(--bar);border-top:1px solid var(--line);padding:14px;text-align:center;color:var(--muted);font-size:14px}
+footer a{color:var(--or2);font-weight:800;text-decoration:none}
+@media(max-width:820px){
+  h2{font-size:26px}
+  .tlayout{grid-template-columns:1fr}
+  .pal{position:static;display:none}
+  .pal.open{display:block}
+  #palToggle{display:inline-block}
+  #submit2{display:inline-block}
+  header h1{font-size:15px}
+  .rgrid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<header>
+  <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="none" stroke="#8fa0d8" stroke-width="3" stroke-dasharray="6 4"/><path d="M22 7 12 22h7l-2 11 11-16h-7z" fill="#ff9a2a"/></svg>
+  <h1>Reasoning Sectional Test for RRB JE</h1>
+  <div id="timer">20:00</div>
+</header>
+
+<main>
+<section id="intro" class="card">
+  <h2>Reasoning Sectional Test for RRB JE</h2>
+  <div class="stats">
+    <div class="stat"><b>25</b><span>Questions</span></div>
+    <div class="stat"><b>20 min</b><span>Total time</span></div>
+    <div class="stat pos"><b>+1</b><span>Each correct answer</span></div>
+    <div class="stat neg"><b>−0.333</b><span>Each wrong answer</span></div>
+  </div>
+  <ul class="rules">
+    <li>Unattempted questions carry 0 marks.</li>
+    <li>The timer starts when you press Start and the test submits itself at 0:00.</li>
+    <li>Use the question palette to jump between questions and mark ones to revisit.</li>
+    <li>Your score appears when you submit, followed by a full solution for every question.</li>
+  </ul>
+  <button class="btn" id="startBtn">Start test</button>
+</section>
+
+<section id="test">
+  <div class="tlayout">
+    <div class="card">
+      <div class="qhead"><span class="qnum" id="qn"></span><button class="btn ghost sm" id="palToggle">Question palette</button></div>
+      <div class="qtext" id="qt"></div>
+      <div id="opts"></div>
+      <div class="actions">
+        <button class="btn ghost sm" id="prev">‹ Previous</button>
+        <button class="btn ghost sm" id="clr">Clear response</button>
+        <button class="btn rev sm" id="mrk">Mark for review &amp; next</button>
+        <button class="btn sm" id="nxt">Save &amp; next ›</button>
+        <button class="btn ghost sm" id="submit2">Submit test</button>
+      </div>
+    </div>
+    <aside class="card pal" id="pal">
+      <h3>Question palette</h3>
+      <div class="grid" id="grid"></div>
+      <div class="legend">
+        <span><i style="background:#0b1220;border-color:#2b3658"></i>Not visited</span>
+        <span><i style="background:#3a2230;border-color:#8a3b55"></i>Not answered</span>
+        <span><i style="background:#143a31;border-color:#3ddc97"></i>Answered</span>
+        <span><i style="background:#2f2650;border-color:#a78bfa"></i>Marked</span>
+      </div>
+      <button class="btn" style="width:100%" id="submit">Submit test</button>
+    </aside>
+  </div>
+</section>
+
+<section id="result">
+  <div class="card">
+    <div class="score"><div class="sub">Your score</div><div class="big" id="sc"></div></div>
+    <div class="rgrid" id="rg"></div>
+    <h3 class="sec">Question map</h3>
+    <div class="map" id="map"></div>
+    <h3 class="sec">Topic revision insights</h3>
+    <div class="ins" id="ins"></div>
+    <h3 class="sec">Solutions</h3>
+    <div class="filters" id="flt"></div>
+    <div id="sols"></div>
+    <div style="text-align:center;margin-top:10px"><button class="btn" id="again">Retake test (options reshuffle)</button></div>
+  </div>
+</section>
+</main>
+
+<footer>Prepared for aspirants by <a href="https://t.me/+-w3_bHfKL7pmZmE9" target="_blank" rel="noopener">SSC RRB GA for Engineers by Sourav</a></footer>
+
+<script>
+/* ---------- helpers for solution visuals ---------- */
+function boxes(items,hi,hi2,labels){
+  return '<div class="viz"><div class="boxes">'+items.map(function(x,i){
+    var c=(hi&&hi.indexOf(i)>-1)?' hl':((hi2&&hi2.indexOf(i)>-1)?' hl2':'');
+    return '<div class="bx'+c+'">'+x+(labels&&labels[i]?'<small>'+labels[i]+'</small>':'<small>'+(i+1)+'</small>')+'</div>';
+  }).join('')+'</div></div>';
+}
+function table(head,rows){
+  return '<div class="viz"><table class="t"><tr>'+head.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr>'+rows.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</table></div>';
+}
+function dirSVG(){
+  var pts=[[0,0],[-23,0],[-23,63],[8,63],[8,36],[-71,36],[-71,0]];
+  var names=['Y (start)','','','','','','Z (stop)'];
+  var sx=3.1,sy=3.0,ox=30,oy=16;
+  function X(x){return ox+(x+71)*sx}function Y(y){return oy+(63-y)*sy}
+  var d=pts.map(function(p,i){return (i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)}).join(' ');
+  var legs=[['23 W',-11.5,0,-9],['63 N',-23,31,-6],['31 E',-7,63,-6],['27 S',8,49.5,6],['79 W',-31.5,36,-6],['36 S',-71,18,6]];
+  var s='<div class="viz"><svg viewBox="0 0 310 235" width="100%" style="max-width:420px"><rect width="310" height="235" rx="12" fill="#0b1220"/>';
+  s+='<path d="'+d+'" fill="none" stroke="#ff9a2a" stroke-width="2.5"/>';
+  s+='<path d="M'+X(-71)+' '+Y(0)+' L'+X(0)+' '+Y(0)+'" stroke="#3ddc97" stroke-width="2.5" stroke-dasharray="6 4" fill="none"/>';
+  legs.forEach(function(l){var tx=X(l[1])+(l[3]>0?8:-8),ty=Y(l[2])+(l[0]==='23 W'?-6:(l[0]==='31 E'||l[0]==='79 W'?-6:4));
+    s+='<text x="'+(l[0]==='23 W'?X(l[1]):tx)+'" y="'+ty+'" fill="#e9edf9" font-size="10" text-anchor="middle">'+l[0]+'</text>'});
+  [[0,0,'Y','#ffb355'],[-71,0,'Z','#3ddc97']].forEach(function(p){s+='<circle cx="'+X(p[0])+'" cy="'+Y(p[1])+'" r="5" fill="'+p[3]+'"/><text x="'+(X(p[0])+(p[2]==='Y'?8:-2))+'" y="'+(Y(p[1])+16)+'" fill="'+p[3]+'" font-size="12" font-weight="700">'+p[2]+'</text>'});
+  s+='<text x="'+X(-35)+'" y="'+(Y(0)+16)+'" fill="#3ddc97" font-size="11" text-anchor="middle">71 km East →</text>';
+  s+='</svg></div>';return s;
+}
+function circSVG(order,hi,hi2){
+  var cx=130,cy=125,r=88,s='<div class="viz"><svg viewBox="0 0 260 250" width="100%" style="max-width:300px"><rect width="260" height="250" rx="12" fill="#0b1220"/><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#2b3658" stroke-width="2"/>';
+  order.forEach(function(n,i){var a=(-90+i*360/order.length)*Math.PI/180,x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+    var f=hi.indexOf(n)>-1?'#ff9a2a':(hi2.indexOf(n)>-1?'#a78bfa':'#1b2745'),t=(hi.indexOf(n)>-1||hi2.indexOf(n)>-1)?'#140d2b':'#e9edf9';
+    s+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="18" fill="'+f+'" stroke="#8fa0d8"/><text x="'+x.toFixed(1)+'" y="'+(y+5).toFixed(1)+'" text-anchor="middle" font-weight="800" fill="'+t+'" font-size="15">'+n+'</text>'});
+  s+='<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" fill="#9fabcb" font-size="11">All face the centre</text><text x="'+cx+'" y="'+(cy+12)+'" text-anchor="middle" fill="#9fabcb" font-size="11">(clockwise order shown)</text></svg></div>';return s;
+}
+
+/* ---------- question bank ---------- */
+var Q=[
+{t:'Number series',src:'RankMitra GI PDF · Q8 · p2',
+ q:'What should come in place of the ‘?’ in the given series?<span class="series">8 &nbsp; 6 &nbsp; 9 &nbsp; 23 &nbsp; 87 &nbsp; ?</span>',
+ o:['437','421','429','433'],a:2,
+ s:['8 × 1 − 2 = 6','6 × 2 − 3 = 9','9 × 3 − 4 = 23','23 × 4 − 5 = 87','87 × 5 − 6 = <b>429</b>'],
+ tip:'When terms grow faster and faster, try “× n − k” where both n and k rise by 1 each step.'},
+
+{t:'Letter-number cluster series',src:'NTPC 2025 Answer Key PDF · Q9 · p2',
+ q:'Which of the following letter-number clusters will replace the question mark “?” in the given series to make it logically complete?<span class="series">VPG 7, ZTK 11, DXO 15, HBS 19, ?</span>',
+ o:['LEU 23','MGX 23','LGY 24','LFW 23'],a:3,
+ s:['Numbers: 7, 11, 15, 19 → +4 each time, so next = 23.','1st letter: V → Z → D → H → <b>L</b> (+4 each).','2nd letter: P → T → X → B → <b>F</b> (+4 each).','3rd letter: G → K → O → S → <b>W</b> (+4 each).','Answer: <b>LFW 23</b>.'],
+ tip:'Check every position separately; if all letters shift by the same number, it is a simple constant-jump series. Use the number part to eliminate options fast.'},
+
+{t:'Letter series (letters between)',src:'RankMitra GI PDF · Q44 · p9',
+ q:'Refer to the following letter series and answer the question that follows.<span class="series">(Left) Z K J H G F D S T U I A W Q P L M N B X (Right)</span>How many letters are there in the English alphabetical series between the letter which is fifth from the right end and the letter which is fourth from the left end of the series?',
+ o:['One','More than three','Two','Three'],a:3,
+ viz:function(){var a='Z K J H G F D S T U I A W Q P L M N B X'.split(' ');return boxes(a,[3,15]) + boxes(['H','I','J','K','L'],[0,4],[1,2,3],['4th from left','','','','5th from right']);},
+ s:['The series has 20 letters. 5th from the right = 20 − 5 + 1 = 16th letter = <b>L</b>.','4th from the left = <b>H</b>.','Alphabet order between H and L: I, J, K → <b>3 letters</b>.'],
+ tip:'“Fifth from right” in a series of n letters is position (n − 5 + 1) from the left. Then count only the alphabet gap, not the series gap.'},
+
+{t:'Digit series counting',src:'RRB Group-D PDF · Q4 · p1',
+ q:'Refer to the following series and answer the question that follows. (All numbers are single-digit numbers only.) (Counting to be done from left to right only.)<span class="series">(Left) 4 2 4 5 2 5 3 6 2 3 3 7 4 1 5 1 5 7 8 7 7 9 8 4 3 6 9 (Right)</span>How many such odd digits are there each of which is immediately preceded by an odd digit and also immediately followed by an odd digit?',
+ o:['3','2','5','4'],a:2,
+ s:['We need patterns of the form <b>odd – odd – odd</b> where the middle digit is the one counted.','Scanning the series, the valid triplets are: 3-<b>3</b>-7, 1-<b>5</b>-1, 5-<b>1</b>-5, 1-<b>5</b>-7, 7-<b>7</b>-9.','Count = <b>5</b>.'],
+ viz:function(){var a='4 2 4 5 2 5 3 6 2 3 3 7 4 1 5 1 5 7 8 7 7 9 8 4 3 6 9'.split(' ');return boxes(a,[10,14,15,16,20]);},
+ tip:'Mark every even digit first (they break the chain), then check the odd runs of three or more – each interior digit of a run counts.'},
+
+{t:'Letter shifting (new group of letters)',src:'RankMitra GI PDF · Q5 · p1',
+ q:'Each vowel in the word WRENCHINGLY is changed to the letter immediately following it in the English alphabetical order AND each consonant is changed to the second letter preceding it in the English alphabetical order. How many letters will appear exactly twice in the group of letters thus formed?',
+ o:['One','Four','Three','Two'],a:2,
+ viz:function(){var w='WRENCHINGLY'.split(''),n='UPFLAFJLEJW'.split('');return table(['Old'].concat(w),[['New'].concat(n)]);},
+ s:['Vowels (+1): E → F, I → J. Consonants (−2): W→U, R→P, N→L, C→A, H→F, N→L, G→E, L→J, Y→W.','New group: U P F L A F J L E J W.','Letters appearing twice: <b>F</b> (E and H), <b>L</b> (N and N), <b>J</b> (I and L).','Count = <b>3</b>.'],
+ tip:'Write the old and new letters in two rows, then tally. Letters from different sources can collide (E→F and H→F).'},
+
+{t:'Alphabetical arrangement of a word',src:'RankMitra GI PDF · Q69 · p13',
+ q:'Each letter in the word INJURED is arranged in the English alphabetical order. How many letters are there in the English alphabetical order between the letter which is third from the left and the one which is second from the right in the new letter cluster thus formed?',
+ o:['8','11','7','9'],a:0,
+ viz:function(){return boxes('DEIJNRU'.split(''),[2,5]);},
+ s:['Arrange A→Z: <b>D E I J N R U</b>.','3rd from left = <b>I</b>; 2nd from right = <b>R</b>.','Between I and R in the alphabet: J, K, L, M, N, O, P, Q → <b>8</b>.'],
+ tip:'Gap between two letters = (difference of positions) − 1. I = 9, R = 18 → 18 − 9 − 1 = 8.'},
+
+{t:'Coding–decoding (letters to digits)',src:'NTPC 2025 Answer Key PDF · Q30 · p5',
+ q:'In a certain code language, ‘BELI’ is coded as ‘6315’ and ‘EVIL’ is coded as ‘9653’. What is the code for ‘V’ in the given code language?',
+ o:['6','3','9','7'],a:2,
+ s:['Common letters in BELI and EVIL: <b>E, L, I</b>. Common digits in 6315 and 9653: <b>6, 3, 5</b>.','So E, L, I ↔ {6, 3, 5} in some order.','The letter only in BELI (B) takes the leftover digit <b>1</b>.','The letter only in EVIL (V) takes the leftover digit <b>9</b>.'],
+ tip:'Find common letters ↔ common digits first. The unique letter gets the unique digit, so you need not decode the order.'},
+
+{t:'Coding–decoding (position values)',src:'RankMitra GI PDF · Q27 · p5',
+ q:'In a certain code language, "ZCKU" is coded as "94" and "SAPI" is coded as "126". What is the code for "GXRB" in that given language?',
+ o:['127','120','119','114'],a:3,
+ viz:function(){return table(['Word','Opposite positions (27 − position)','Sum','× 2'],[['ZCKU','1 + 24 + 16 + 6','47','94'],['SAPI','8 + 26 + 11 + 18','63','126'],['GXRB','20 + 3 + 9 + 25','57','<b>114</b>']]);},
+ s:['Test the rule on ZCKU: reverse-alphabet positions Z=1, C=24, K=16, U=6 → sum 47 → 47 × 2 = 94 ✓.','SAPI: 8 + 26 + 11 + 18 = 63 → × 2 = 126 ✓.','GXRB: 20 + 3 + 9 + 25 = 57 → 57 × 2 = <b>114</b>.'],
+ tip:'If the plain sum of positions fails, try the opposite (reverse) positions (A = 26 … Z = 1) and then a multiplier.'},
+
+{t:'Analogy (number pair)',src:'RRB Group-D PDF · Q283 · p64',
+ q:'14 is related to 213 following a certain logic. Following the same logic, 22 is related to 333. To which of the following is 31 related, following the same logic? (NOTE: Operations should be performed on the whole numbers, without breaking down the numbers into their constituent digits.)',
+ o:['472','468','436','454'],a:1,
+ s:['14 → 213: 14 × 15 = 210; 210 + 3 = 213 ✓.','22 → 333: 22 × 15 = 330; 330 + 3 = 333 ✓.','31 → 31 × 15 + 3 = 465 + 3 = <b>468</b>.'],
+ tip:'When the output is about 15× the input, divide first: 213 ÷ 14 ≈ 15.2, 333 ÷ 22 ≈ 15.1 → rule “× 15 + 3”.'},
+
+{t:'Analogy (letter clusters)',src:'NTPC 2025 Answer Key PDF · Q10 · p2',
+ q:'EGDH is related to FIFI in a certain way based on the English alphabetical order. In the same way, JMHL is related to KOJM. To which of the following is NPRS related, following the same logic?',
+ o:['ORTT','ORST','OSST','OOPT'],a:0,
+ viz:function(){return table(['','1st','2nd','3rd','4th'],[['Change','+1','+2','+2','+1'],['EGDH → FIFI','E→F','G→I','D→F','H→I'],['JMHL → KOJM','J→K','M→O','H→J','L→M'],['NPRS → ?','N→O','P→R','R→T','S→T']]);},
+ s:['EGDH → FIFI: +1, +2, +2, +1.','JMHL → KOJM follows the same +1, +2, +2, +1.','NPRS: N+1 = O, P+2 = R, R+2 = T, S+1 = T → <b>ORTT</b>.'],
+ tip:'Write the shift for each position under the letters; the same shift pattern is applied to the third cluster.'},
+
+{t:'Classification (odd one out – letter clusters)',src:'RRB Group-D PDF · Q872 · p187',
+ q:'Based on the English alphabetical order, three of the following four are alike in a certain way and thus form a group. Which is the one that does not belong to that group? (Note: The odd one out is not based on the number of consonants/vowels or their position in the letter cluster.)',
+ o:['TBU','NFX','OGY','SKC'],a:0,
+ viz:function(){return table(['Cluster','Positions','Step 1','Step 2'],[['NFX','14, 6, 24','−8','−8 (cyclic)'],['OGY','15, 7, 25','−8','−8 (cyclic)'],['SKC','19, 11, 3','−8','−8'],['<b>TBU</b>','20, 2, 21','−18 (cyclic +8)','+19 (cyclic −7)']]);},
+ s:['In NFX, OGY and SKC every next letter is 8 places behind the previous one (going cyclically A→Z when needed).','In TBU: T → B is +8 (cyclic), B → U is −7 (cyclic) – the pattern breaks.','Odd one out = <b>TBU</b>.'],
+ tip:'For 3-letter clusters compute the two gaps (cyclic if needed). Three clusters will share the same gaps; the odd one differs.'},
+
+{t:'Word-pattern triad',src:'NTPC 2025 Answer Key PDF · Q63 · p44',
+ q:'Select the triad which follows the same pattern as that followed by the two pairs given below. Both pairs follow the same pattern.<span class="series">BALD-BADL-ABLD<br>EPIC-EPCI-PEIC</span>',
+ o:['PART-RTPA-APTR','FIRE-IREF-FRIE','HIKE-HIEK-IHKE','COME-COEM-OEMC'],a:2,
+ viz:function(){return table(['Word','Step 1','Step 2'],[['BALD','BA<b>DL</b>','<b>AB</b>LD → swap 1&2, 3&4'],['EPIC','EP<b>CI</b>','<b>PE</b>IC'],['HIKE','HI<b>EK</b>','<b>IH</b>KE ✓']]);},
+ s:['Step 1: swap the 3rd and 4th letters (BALD → BADL, EPIC → EPCI).','Step 2: swap the 1st with 2nd AND the 3rd with 4th (BADL → ABLD, EPCI → PEIC).','HIKE → HIEK → IHKE fits both steps.','Other options fail at step 1: PART→PATR, FIRE→FIER, COME→COEM (but then OCME, not OEMC).'],
+ tip:'Test step 1 on every option first – it eliminates most of them immediately.'},
+
+{t:'Blood relation (coded relations)',src:'RRB Group-D PDF · Q972 · p206',
+ q:'In a certain code language,<br>A + B means ‘A is the mother of B’,<br>A – B means ‘A is the brother of B’,<br>A × B means ‘A is the wife of B’,<br>A % B means ‘A is the father of B’, and<br>A # B means ‘A is the daughter of B’.<br>How is K related to G if ‘L + G # P % Q + K × Z’?',
+ o:['Sister’s daughter','Brother’s wife','Wife’s mother','Mother'],a:0,
+ viz:function(){return '<pre class="tree">L (mother) ── G (daughter)\nP (father) ──┬── G\n             └── Q (child of P → G\'s sister)\n                   │ mother of\n                   K ── wife of ── Z</pre>';},
+ s:['L + G → L is the mother of G.','G # P → G is the daughter of P.','P % Q → P is the father of Q, so Q is a child of P, i.e. G’s sibling.','Q + K → Q is the mother of K, so Q is female → Q is G’s <b>sister</b>.','K × Z → K is the wife of Z, so K is female. K is Q’s child → G’s sister’s daughter.'],
+ tip:'Convert the chain step by step into a mini family tree; gender comes from words like mother, wife, daughter.'},
+
+{t:'Direction sense & distance',src:'RankMitra GI PDF · Q64 · p12',
+ q:'Tanmay starts from Point Y and drives 23 km towards West. He then takes a right turn, drives 63 km, turns right and drives 31 km. He then takes a right turn and drives 27 km. He takes a right turn, drives 79 km. He then turns left, drives 36 km to stop at Point Z. How far (shortest distance) and towards which direction should he drive in order to reach Point Y again? (All turns are 90° turns only unless specified.)',
+ o:['71 km towards east','71 km towards west','75 km towards east','73 km towards west'],a:0,
+ viz:function(){return dirSVG();},
+ s:['Take Y as (0, 0), East = +x, North = +y.','West 23 → (−23, 0). Right turn (North) 63 → (−23, 63). Right turn (East) 31 → (8, 63).','Right turn (South) 27 → (8, 36). Right turn (West) 79 → (−71, 36). Left turn (South) 36 → (−71, 0).','Z = (−71, 0) and Y = (0, 0): same horizontal line, Y lies to the <b>East</b> of Z at 71 km.'],
+ tip:'Add up all East–West legs and all North–South legs separately: net E–W = −23 + 31 − 79 = −71 and net N–S = 63 − 27 − 36 = 0.'},
+
+{t:'Ranking & position in a row',src:'RRB Group-D PDF · Q1379 · p318',
+ q:'In a row of people all facing North, Gyalmu is 9th from the right end. Akol is 11th from the right end. Akol is exactly between Gyalmu and Victoria. If Victoria is 2nd from the left end of the line, how many people are there in the row?',
+ o:['12','13','11','14'],a:3,
+ viz:function(){var r=[];for(var i=1;i<=14;i++)r.push(i);var l=[];l[1]='Victoria';l[3]='Akol';l[5]='Gyalmu';return boxes(r,[1,3,5],null,l.map(function(x){return x||''}))+'<div class="sub" style="font-size:13px">Numbers shown are positions from the left.</div>';},
+ s:['Gyalmu is 9th and Akol is 11th from the right, so one place (2 positions) separates them.','Akol is exactly in the middle, so Victoria is another 2 places further: 11 + 2 = <b>13th from the right</b>.','Victoria is also 2nd from the left.','Total = 13 + 2 − 1 = <b>14</b>.'],
+ tip:'Total in a row = (position from left) + (position from right) − 1.'},
+
+{t:'Circular seating arrangement',src:'NTPC 2025 Answer Key PDF · Q5 · p2',
+ q:'P, Q, R, S, T, U and V sit around a circular table facing the centre. Only one person sits between U and P when counted from the right of U. Only one person sits between P and R. Only one person sits between U and Q. Only two people sit between V and R. Only one person sits between T and Q. How many people sit between T and V when counted from the left of T?',
+ o:['3','2','4','1'],a:3,
+ viz:function(){return circSVG(['P','V','U','S','Q','R','T'],['T','V'],['P']);},
+ s:['Facing the centre, a person’s right is anticlockwise, left is clockwise.','From U’s right: U → V → P, so V is between U and P. Place P, V, U in that order clockwise.','P and R have one person between them: R is two seats from P on the other side, so T is between P and R (…R, T, P).','U and Q: one person (S) between → U, S, Q. Then V, U, S, Q, R, T, P closes the circle.','Check: V and R have two people (P, T) between them the short way ✓; T and Q have R between ✓.','Final clockwise order: <b>P, V, U, S, Q, R, T</b>.','From T’s left (clockwise) the next seats are P, then V → only <b>P</b> sits between T and V = 1.'],
+ tip:'In circular questions, fix one person (say P) and place others by the “one between / two between” clues; a seven-seat circle has just a few possible distances (1, 2 or 3).'},
+
+{t:'Vertical arrangement (boxes)',src:'RankMitra GI PDF · Q58 · p11',
+ q:'Seven boxes, M, N, O, P, Q, R and S, are kept one over the other, but not necessarily in the same order. N is kept fourth from the top. Only two boxes are kept between N and S. Only P is kept above M. O is kept immediately above S. Q is kept on one of the positions after M but on one of the positions before N. Which box is kept third from the bottom?',
+ o:['R','O','S','Q'],a:0,
+ viz:function(){return table(['Position','Box'],[['1 (Top)','P'],['2','M'],['3','Q'],['4','N'],['5 (3rd from bottom)','<b>R</b>'],['6','O'],['7 (Bottom)','S']]);},
+ s:['N is 4th from the top. Two boxes between N and S → S is 1st or 7th. O is just above S, so S cannot be 1st → <b>S = 7th, O = 6th</b>.','Only P is above M → P = 1st, M = 2nd.','Q is below M but above N → Q = 3rd.','The remaining box R takes the 5th place.','3rd from the bottom = 5th from the top = <b>R</b>.'],
+ tip:'Start with the fixed clue (N is 4th) and the clue that has only one possible placement (S can only be 7th).'},
+
+{t:'Day-based arrangement (puzzle)',src:'NTPC 2025 Answer Key PDF · Q17 · p3',
+ q:'Each of P, Q, R, S, T, U and V has an exam on a different day of a week starting from Monday and ending on Sunday of the same week. Only five people have exams between V and T. Only two people have exams between R and T. Q has the exam immediately after R. S has the exam immediately before P but after T. How many people have exams between P and U?',
+ o:['One','Two','Three','Four'],a:1,
+ viz:function(){return table(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[['T','S','P','R','Q','U','V']]);},
+ s:['Five between V and T means they occupy the two ends (Mon and Sun).','R is three days away from T. S is after T, so T is on <b>Monday</b>, V on Sunday, and R on <b>Thursday</b>.','Q immediately after R → <b>Friday</b>.','S immediately before P, and after T → S = Tuesday, P = Wednesday. U gets the last day, <b>Saturday</b>.','Between P (Wed) and U (Sat): R and Q → <b>2</b>.'],
+ tip:'“Five between” in a week of 7 days instantly fixes the two end days – start from there.'},
+
+{t:'Syllogism (statements & conclusions)',src:'RankMitra GI PDF · Q15 · p3',
+ q:'Read the given statement(s) and conclusions carefully. Assuming that the information given in the statements is true, even if it appears to be at variance with commonly known facts, decide which of the given conclusions logically follow(s) from the statement(s).<br><b>Statements:</b> All kings are buttons. No pants are kings.<br><b>Conclusion (I):</b> All buttons are kings.<br><b>Conclusion (II):</b> Some buttons are not pants.',
+ o:['Only conclusion (II) follows','Only conclusion (I) follows','Neither conclusion (I) nor (II) follows','Both conclusions (I) and (II) follow'],a:0,
+ s:['Draw the Venn picture: the “kings” circle sits fully inside the “buttons” circle; the “pants” circle is completely outside “kings”.','Conclusion (I): “All buttons are kings” – buttons can be larger than kings, so this is <b>not definite</b>.','Conclusion (II): Kings are buttons and no king is a pant, so those buttons (kings) are not pants → <b>Some buttons are not pants ✓</b>.','Only (II) follows.'],
+ tip:'“All A are B” never reverses to “All B are A”. A “No” statement combined with an “All” statement gives a “Some … are not …” conclusion.'},
+
+{t:'Data sufficiency',src:'NTPC 2025 Answer Key PDF · Q99 · p16',
+ q:'In this question, a question is followed by two statements numbered (I) and (II). You have to decide whether the data provided in the statements are sufficient to answer the question. Read both the statements and decide the appropriate answer.<br><b>Q.</b> Five students – Isha, Kavita, Meenal, Nisha, and Priti – scored different marks. Who scored the second highest?<br>(I) Meenal scored more than Isha but less than Nisha.<br>(II) Priti scored more than Meenal but less than Nisha.',
+ o:['Both statements I and II together are NOT sufficient to answer the question','Data in Statement II alone is sufficient to answer the question while data in Statement I is not','Data in Statement I alone is sufficient to answer the question while data in Statement II is not','Both statements I and II together (and not statement I alone or statement II alone) are sufficient to answer the question'],a:0,
+ viz:function(){return table(['Statement','Order (low → high)'],[['I','Isha &lt; Meenal &lt; Nisha'],['II','Meenal &lt; Priti &lt; Nisha'],['I + II','Isha &lt; Meenal &lt; Priti &lt; Nisha &nbsp;(Kavita unknown)']]);},
+ s:['Statement I: Isha &lt; Meenal &lt; Nisha. Statement II: Meenal &lt; Priti &lt; Nisha.','Combine: Isha &lt; Meenal &lt; Priti &lt; Nisha.','Kavita’s marks are not related to anyone. She could be above Nisha, between two others, or the lowest.','So the second-highest could be Priti (if Kavita is above Nisha) or Nisha (if Kavita is lower) – <b>not sufficient even together</b>.'],
+ tip:'In ranking data-sufficiency, check whether every person has been placed. A person who appears in neither statement keeps the answer open.'},
+
+{t:'Mathematical operations (symbol meanings)',src:'RRB Group-D PDF · Q785 · p170',
+ q:'If ‘+’ means ‘subtraction’, ‘−’ means ‘multiplication’, ‘×’ means ‘division’ and ‘÷’ means ‘addition’, then what will come in place of the question mark (?) in the following equation?<span class="series">15 × 5 ÷ 12 − 2 + 11 = ?</span>',
+ o:['23','16','20','27'],a:1,
+ s:['Replace the signs: × → ÷, ÷ → +, − → ×, + → −.','Equation becomes: 15 ÷ 5 + 12 × 2 − 11.','BODMAS: 15 ÷ 5 = 3; 12 × 2 = 24.','3 + 24 − 11 = <b>16</b>.'],
+ tip:'Rewrite the whole expression with real signs first, then apply BODMAS – never calculate while swapping.'},
+
+{t:'Digit arrangement (positions unchanged)',src:'NTPC 2025 Answer Key PDF · Q93 · p16',
+ q:'Each of the digits in the number 15762349 is arranged in ascending order from left to right. The position of how many digits will remain unchanged as compared to that in the original number?',
+ o:['Two','One','None','Three'],a:0,
+ viz:function(){return table(['Position','1','2','3','4','5','6','7','8'],[['Original','1','5','7','6','2','3','4','9'],['Ascending','1','2','3','4','5','6','7','9'],['Same?','✓','✗','✗','✗','✗','✗','✗','✓']]);},
+ s:['Ascending order: 1 2 3 4 5 6 7 9.','Compare position by position: 1st (1 = 1) ✓ and 8th (9 = 9) ✓. All others differ.','Digits at unchanged positions = <b>2</b>.'],
+ tip:'Digits already in their “sorted place” are usually the smallest at the start or the largest at the end.'},
+
+{t:'Arithmetical reasoning (digit changes)',src:'RRB Group-D PDF · Q1424 · p325',
+ q:'If 1 is added to each odd digit and 2 is subtracted from each even digit in the number 6342718, what will be the sum of the digits that are second from the left and second from the right in the new number thus formed?',
+ o:['4','6','7','5'],a:1,
+ viz:function(){return table(['Old','6','3','4','2','7','1','8'],[['Rule','−2','+1','−2','−2','+1','+1','−2'],['New','4','4','2','0','8','2','6']]);},
+ s:['Odd digits (3, 7, 1) get +1; even digits (6, 4, 2, 8) get −2.','New number: 4 4 2 0 8 2 6.','2nd from left = 4; 2nd from right = 2.','Sum = 4 + 2 = <b>6</b>.'],
+ tip:'Only the two digits asked for matter – you can skip changing the others and save time.'},
+
+{t:'Linear seating arrangement',src:'RankMitra GI PDF · Q70 · p13',
+ q:'Seven people, U, T, E, N, S, I and L, are sitting in a row, facing the north. Only five people sit between I and L. S sits to the immediate left of L. Only one person sits between S and N. U sits at some place to the left of E but at some place to the right of T. Who sits third from the left end of the line?',
+ o:['T','U','E','N'],a:1,
+ viz:function(){return boxes(['I','T','U','N','E','S','L'],[2],null,['Left end','','3rd','','','','Right end']);},
+ s:['Five people between I and L means they are at the two ends. S is immediately left of L, so L cannot be at the left end → <b>I = 1st, L = 7th, S = 6th</b>.','Only one person between S and N → N = 4th (E, the person between, will be 5th).','T, U, E remain for positions 2, 3, 5 with T left of U left of E → T = 2nd, U = 3rd, E = 5th.','Third from the left = <b>U</b>.'],
+ tip:'In a row of 7, “five between” means the two ends. Then use the “immediate left/right” clue to decide which end is which.'},
+
+{t:'Word formation (meaningful words)',src:'RRB Group-D PDF · Q1159 · p248',
+ q:'How many meaningful five-letter English words can be formed using O, N, W, M and A using all the letters but each letter only once in each word?',
+ o:['None','One','More than two','Two'],a:1,
+ s:['Letters available: O, N, W, M, A.','Try the natural combinations: <b>WOMAN</b> ✓ is a valid word.','Other arrangements (e.g., MOWAN, NOWMA, WAMON, MANOW) are not meaningful English words.','Only one word can be formed.'],
+ tip:'Start with common letter pairs (W-O, M-A, N at the end) to find the word quickly instead of trying every arrangement.'}
+];
+
+/* ---------- state ---------- */
+var TOTAL=20*60,left,tick,cur=0,order=[],resp=[],visited=[],marked=[],submitted=false,startAt=0;
+function $(i){return document.getElementById(i)}
+function show(id){['intro','test','result'].forEach(function(x){$(x).style.display=(x===id?'block':'none')});$('timer').style.display=(id==='test'?'block':'none');window.scrollTo(0,0)}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function fmt(s){var m=Math.floor(s/60),x=s%60;return m+':'+(x<10?'0':'')+x}
+
+function start(){
+  order=Q.map(function(q){return shuffle([0,1,2,3])});
+  resp=Q.map(function(){return null});visited=Q.map(function(){return false});marked=Q.map(function(){return false});
+  submitted=false;cur=0;left=TOTAL;startAt=Date.now();
+  show('test');$('timer').textContent=fmt(left);$('timer').className='';
+  clearInterval(tick);tick=setInterval(function(){left--;$('timer').textContent=fmt(Math.max(left,0));if(left<=120)$('timer').className='low';if(left<=0){clearInterval(tick);finish(true)}},1000);
+  buildGrid();render();
+}
+function buildGrid(){
+  $('grid').innerHTML=Q.map(function(q,i){return '<button class="pn" id="p'+i+'" onclick="go('+i+')">'+(i+1)+'</button>'}).join('');
+}
+function paint(){
+  Q.forEach(function(q,i){var b=$('p'+i);var c='pn';
+    if(marked[i])c+=' mark'+(resp[i]!==null?' markans':'');else if(resp[i]!==null)c+=' ans';else if(visited[i])c+=' visited';
+    if(i===cur)c+=' cur';b.className=c});
+}
+function render(){
+  visited[cur]=true;var q=Q[cur];
+  $('qn').textContent='Question '+(cur+1)+' of '+Q.length;
+  $('qt').innerHTML=q.q;
+  $('opts').innerHTML=order[cur].map(function(oi,k){
+    return '<button class="opt'+(resp[cur]===oi?' sel':'')+'" onclick="pick('+oi+')"><span class="l">'+'ABCD'[k]+'</span><span>'+q.o[oi]+'</span></button>'}).join('');
+  $('prev').disabled=cur===0;$('nxt').textContent=cur===Q.length-1?'Save':'Save & next ›';
+  paint();
+}
+function pick(oi){resp[cur]=oi;render()}
+function go(i){cur=i;render();$('pal').classList.remove('open')}
+$('clr').onclick=function(){resp[cur]=null;render()};
+$('prev').onclick=function(){if(cur>0){cur--;render()}};
+$('nxt').onclick=function(){marked[cur]=false;if(cur<Q.length-1)cur++;render()};
+$('mrk').onclick=function(){marked[cur]=true;if(cur<Q.length-1)cur++;render()};
+$('palToggle').onclick=function(){$('pal').classList.toggle('open')};
+$('submit').onclick=$('submit2').onclick=function(){
+  var n=resp.filter(function(r){return r!==null}).length;
+  if(confirm('You have attempted '+n+' of '+Q.length+' questions. Submit the test now?'))finish(false);
+};
+$('startBtn').onclick=start;
+$('again').onclick=start;
+
+/* ---------- result ---------- */
+var filt='all',R=[];
+function finish(auto){
+  if(submitted)return;submitted=true;clearInterval(tick);
+  var used=Math.min(TOTAL,Math.round((Date.now()-startAt)/1000));
+  var c=0,w=0,u=0;R=Q.map(function(q,i){var st;if(resp[i]===null){u++;st='u'}else if(resp[i]===q.a){c++;st='c'}else{w++;st='w'}return st});
+  var marks=c-0.333*w;
+  show('result');
+  $('sc').innerHTML=marks.toFixed(2)+' <small>/ '+Q.length+'</small>'+(auto?'<div class="sub" style="font-size:14px;font-weight:500">Time up – test auto-submitted</div>':'');
+  var att=c+w;
+  $('rg').innerHTML=[['Correct',c,'+'+c],['Wrong',w,'−'+(0.333*w).toFixed(3)],['Unattempted',u,'0'],['Attempted',att+' / '+Q.length,''],['Accuracy',att?Math.round(c/att*100)+'%':'0%',''],['Time used',fmt(used),'of 20:00']].map(function(x){
+    return '<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+(x[2]?' · '+x[2]:'')+'</span></div>'}).join('');
+  $('map').innerHTML=Q.map(function(q,i){return '<a class="'+R[i]+'" onclick="jump('+i+')">'+(i+1)+'</a>'}).join('');
+  var need=[],good=[];
+  Q.forEach(function(q,i){(R[i]==='c'?good:need).push(i)});
+  var h='';
+  if(need.length){h+='<div class="row"><b>Revise these topics ('+need.length+')</b></div>'+need.map(function(i){return '<div class="row"><span class="chip '+R[i]+'">'+(R[i]==='w'?'Wrong':'Skipped')+'</span><b>Q'+(i+1)+' · '+Q[i].t+'</b><div class="sub" style="margin-top:6px;font-size:14px">Tip: '+Q[i].tip+'</div></div>'}).join('')}
+  if(good.length){h+='<div class="row"><b>Strong topics ('+good.length+')</b><div style="margin-top:8px">'+good.map(function(i){return '<span class="chip c">Q'+(i+1)+' · '+Q[i].t+'</span>'}).join(' ')+'</div></div>'}
+  $('ins').innerHTML=h;
+  filt='all';buildFilters();buildSols();
+}
+function buildFilters(){
+  var f=[['all','All'],['c','Correct'],['w','Wrong'],['u','Unattempted'],['m','Marked for review']];
+  $('flt').innerHTML=f.map(function(x){return '<button class="fbtn'+(filt===x[0]?' on':'')+'" onclick="setF(\''+x[0]+'\')">'+x[1]+'</button>'}).join('');
+}
+function setF(f){filt=f;buildFilters();buildSols()}
+function jump(i){filt='all';buildFilters();buildSols();var e=$('s'+i);if(e)e.scrollIntoView({behavior:'smooth'})}
+function buildSols(){
+  var out='';
+  Q.forEach(function(q,i){
+    if(filt==='c'&&R[i]!=='c')return;if(filt==='w'&&R[i]!=='w')return;if(filt==='u'&&R[i]!=='u')return;if(filt==='m'&&!marked[i])return;
+    var label=R[i]==='c'?'<span class="chip c">Correct +1</span>':R[i]==='w'?'<span class="chip w">Wrong −0.333</span>':'<span class="chip u">Unattempted 0</span>';
+    var opts=order[i].map(function(oi,k){
+      var cls=oi===q.a?'ok':(resp[i]===oi?'bad':'');
+      var tag=oi===q.a?' ✓ Correct answer':(resp[i]===oi?' ✗ Your answer':'');
+      return '<div class="sopt '+cls+'"><b>'+'ABCD'[k]+'.</b> '+q.o[oi]+'<b>'+tag+'</b></div>'}).join('');
+    out+='<div class="sol '+R[i]+'" id="s'+i+'"><div class="meta"><b>Q'+(i+1)+'</b>'+label+'<span class="topic">'+q.t+'</span>'+(marked[i]?'<span class="chip u">Marked</span>':'')+'</div>'
+      +'<div class="qtext">'+q.q+'</div>'+opts
+      +'<h4 style="margin:14px 0 4px;color:var(--or2)">Step-by-step solution</h4>'+(q.viz?q.viz():'')
+      +'<ol class="steps">'+q.s.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ol>'
+      +'<div class="tip"><b>Shortcut / Tip:</b> '+q.tip+'</div><div class="src" style="margin-top:8px">Source: '+q.src+'</div></div>';
+  });
+  $('sols').innerHTML=out||'<div class="sub">No questions in this filter.</div>';
+}
+</script>
+</body>
+</html>
